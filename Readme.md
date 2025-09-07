@@ -10,7 +10,7 @@ sudo systemctl status postgresql
 psql --version
 # enter as the postgres superuser
 sudo -u postgres psql
-export GOOGLE_API_KEY="AIzaSyDuone_2gRBtEXmisrB17EYTNZeb1P2Row"
+export GOOGLE_API_KEY=""
 ### set up 
 cloudflared tunnel --url http://localhost:8080
 # OpenAPI JSON
