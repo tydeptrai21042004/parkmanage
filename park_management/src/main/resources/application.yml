@@ -19,9 +19,9 @@ logging:
   level:
     org.springframework.security: DEBUG
 # Prefer ENV VARS for secrets in real environments, but this works for local dev
-PAYOS_CLIENT_ID: 97300895-75a4-49fc-bb45-9d37291bdf96
-PAYOS_API_KEY: aa2e5a31-c125-4f69-b86f-483f23223d62
-PAYOS_CHECKSUM_KEY: 8012fa93a8d3681148c224c36ec91a8d39f2b9c90f3ef3cb5c95259b6ae447da
+PAYOS_CLIENT_ID: 
+PAYOS_API_KEY: 
+PAYOS_CHECKSUM_KEY: 
 
 jwt:
   secret: change-me-very-long-random-string-at-least-32-bytes-11111111111111111111111
@@ -29,7 +29,7 @@ jwt:
   issuer: change-me-issuer
 
 gemini:
-  api-key: AIzaSyDL4bvKRy3qkJz0HjihQg3PckjbU-3pb5U    # prefer env var in real use
+  api-key: # prefer env var in real use
   model: gemini-2.0-flash
 
 app:
