@@ -10,7 +10,7 @@ sudo systemctl status postgresql
 psql --version
 # enter as the postgres superuser
 sudo -u postgres psql
-export GOOGLE_API_KEY=""
+export GOOGLE_API_KEY="AIzaSyDuone_2gRBtEXmisrB17EYTNZeb1P2Row"
 ### set up 
 cloudflared tunnel --url http://localhost:8080
 # OpenAPI JSON
@@ -21,3 +21,4 @@ curl -I http://localhost:8080/swagger-ui/index.html
 # or
 curl -I http://localhost:8080/swagger-ui.html
 
+git remote add origin https://github.com/tydeptrai21042004/parkmanage
