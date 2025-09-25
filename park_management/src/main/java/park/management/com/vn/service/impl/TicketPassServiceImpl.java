@@ -31,7 +31,7 @@ public class TicketPassServiceImpl implements park.management.com.vn.service.Tic
   private final PassCodeGenerator codes;
 
   @PersistenceContext
-  private EntityManager em;                       // ✅ used for createForOrderId
+  private EntityManager em;
 
   private static final ZoneId HCMC = ZoneId.of("Asia/Ho_Chi_Minh");
   private final String frontendBase = System.getenv().getOrDefault("FRONTEND_BASE_URL", "http://localhost:5173");
@@ -41,22 +41,34 @@ public class TicketPassServiceImpl implements park.management.com.vn.service.Tic
   public List<TicketPassLink> createForOrder(TicketOrder order) {
     List<TicketPassLink> out = new ArrayList<>();
 
-    // Try to get branch from order; if your getter is getBranch(), change line below accordingly.
+    // Resolve branch from order
     ParkBranch branch = null;
     try {
       branch = order.getParkBranch();
     } catch (NoSuchMethodError | RuntimeException ignored) {
-      // If your entity uses 'getBranch()', uncomment next line and remove the try/catch above.
-      // branch = order.getBranch();
+      // If your entity uses a different getter name, adjust here.
     }
 
-    for (TicketDetail d : order.getDetails()) {
-      for (int i = 0; i < d.getQuantity(); i++) {
+    // Defensive: ensure we have details even if order.getDetails() is null/empty
+    List<TicketDetail> details = order.getDetails();
+    if (details == null || details.isEmpty()) {
+      details = em.createQuery(
+          "SELECT d FROM TicketDetail d WHERE d.ticketOrder.id = :oid",
+          TicketDetail.class
+      ).setParameter("oid", order.getId()).getResultList();
+    }
+
+    for (TicketDetail d : details) {
+      int qty = (d.getQuantity() == null) ? 0 : d.getQuantity();
+      for (int i = 0; i < qty; i++) {
         TicketPass p = new TicketPass();
         p.setCode(codes.newCode(24));
         p.setOrder(order);
+        // Adjust setter name to your entity (detail vs ticketDetail)
         p.setDetail(d);
-        if (branch != null) p.setBranch(branch);               // optional if your column is nullable
+        if (branch != null) {
+          p.setBranch(branch);
+        }
         p.setTicketDate(order.getTicketDate());
         repo.save(p);
 
@@ -73,10 +85,9 @@ public class TicketPassServiceImpl implements park.management.com.vn.service.Tic
 
   @Override
   @Transactional
-  public List<TicketPassLink> createForOrderId(Long orderId) {  // ✅ NEW: what your controller calls
+  public List<TicketPassLink> createForOrderId(Long orderId) {
     TicketOrder order = em.find(TicketOrder.class, orderId);
     if (order == null) throw new RuntimeException("ORDER_NOT_FOUND");
-    // Ensure details are loaded within TX (JPA will lazy-load here)
     return createForOrder(order);
   }
 
@@ -88,7 +99,12 @@ public class TicketPassServiceImpl implements park.management.com.vn.service.Tic
     if (effective == TicketPass.Status.ACTIVE && LocalDate.now(HCMC).isAfter(p.getTicketDate())) {
       effective = TicketPass.Status.EXPIRED;
     }
-    return new TicketPassStatusResponse(p.getId(), effective.name(), p.getTicketDate(), p.getBranch() != null ? p.getBranch().getId() : null);
+    return new TicketPassStatusResponse(
+        p.getId(),
+        effective.name(),
+        p.getTicketDate(),
+        p.getBranch() != null ? p.getBranch().getId() : null
+    );
   }
 
   @Override

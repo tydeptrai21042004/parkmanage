@@ -16,4 +16,9 @@ public interface StaffAssignmentService {
     StaffAssignmentResponse updateStaffAssignment(Long id, StaffAssignmentRequest request);
 
     void deleteStaffAssignmentById(Long id);
+
+    // NEW: used by controller endpoints /of-user and /of-branch
+    List<StaffAssignmentResponse> getAllOfUserInMonth(Long userId, int month, int year);
+
+    List<StaffAssignmentResponse> getAllOfBranchInMonth(Long branchId, int month, int year);
 }

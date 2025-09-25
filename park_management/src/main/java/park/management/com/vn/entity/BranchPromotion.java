@@ -1,16 +1,12 @@
 package park.management.com.vn.entity;
 
 import jakarta.persistence.*;
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
+import lombok.*;
 import park.management.com.vn.constant.DiscountType;
 import park.management.com.vn.entity.base.BaseEntity;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "branch_promotion")
@@ -21,7 +17,7 @@ import park.management.com.vn.entity.base.BaseEntity;
 public class BranchPromotion extends BaseEntity {
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "branch_id")
+  @JoinColumn(name = "park_branch_id")
   private ParkBranch parkBranch;
 
   @Column(name = "description")
@@ -34,18 +30,15 @@ public class BranchPromotion extends BaseEntity {
   @Column(name = "discount_type")
   private DiscountType discountType;
 
-  @Column(name = "valid_from", nullable = false) // e.g. 2025-05-20T00:00
+  @Column(name = "valid_from", nullable = false)
   private LocalDateTime validFrom;
 
-  @Column(name = "valid_until", nullable = false) // e.g. 2025-05-26T23:59
+  @Column(name = "valid_until", nullable = false)
   private LocalDateTime validUntil;
 
-  @Column(name = "is_active")
-  private Boolean isActive;
+  @Column(name = "image_url")
+  private String imageUrl;
 
-
-
-
-
-
+  @Column(nullable = false)
+  private Boolean status = true;
 }

@@ -21,3 +21,4 @@ curl -I http://localhost:8080/swagger-ui/index.html
 # or
 curl -I http://localhost:8080/swagger-ui.html
 
+git remote add origin https://github.com/tydeptrai21042004/parkmanage

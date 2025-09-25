@@ -1,20 +1,20 @@
 package park.management.com.vn.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import park.management.com.vn.entity.base.BaseEntity;
 
 @Entity
 @Table(name = "game")
-@Getter @Setter
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class Game extends BaseEntity {
 
-  @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "branch_id", nullable = false)
+  @JoinColumn(name = "park_branch_id", nullable = false)
   private ParkBranch parkBranch;
 
   @Column(nullable = false, length = 128)
@@ -23,6 +23,9 @@ public class Game extends BaseEntity {
   @Column(length = 2000)
   private String description;
 
-  @Column(length = 256)
-  private String location; // optional in-park location
+  @Column(name = "image_url")
+  private String imageUrl;
+
+  @Column(nullable = false)
+  private Boolean status = true;
 }

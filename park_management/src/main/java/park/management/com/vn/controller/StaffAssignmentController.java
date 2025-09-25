@@ -28,6 +28,20 @@ public class StaffAssignmentController {
         return ResponseEntity.ok(staffAssignmentService.getStaffAssignmentById(id));
     }
 
+    // NEW: Lấy tất cả ca làm của người dùng theo tháng/năm
+    @GetMapping("/of-user")
+    public ResponseEntity<List<StaffAssignmentResponse>> getAllStaffAssignmentOfUser(
+            @RequestParam Long userId, @RequestParam int month, @RequestParam int year) {
+        return ResponseEntity.ok(staffAssignmentService.getAllOfUserInMonth(userId, month, year));
+    }
+
+    // NEW: Lấy tất cả ca làm của branch theo tháng/năm
+    @GetMapping("/of-branch/{branchId}")
+    public ResponseEntity<List<StaffAssignmentResponse>> getAllStaffAssignmentOfBranch(
+            @PathVariable Long branchId, @RequestParam int month, @RequestParam int year) {
+        return ResponseEntity.ok(staffAssignmentService.getAllOfBranchInMonth(branchId, month, year));
+    }
+
     @PostMapping
     public ResponseEntity<StaffAssignmentResponse> createStaffAssignment(@Valid @RequestBody StaffAssignmentRequest request) {
         StaffAssignmentResponse response = staffAssignmentService.createStaffAssignment(request);

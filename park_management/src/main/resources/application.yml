@@ -15,6 +15,20 @@ spring:
     properties:
       hibernate:
         format_sql: true
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${SMTP_USERNAME:}
+    password: ${SMTP_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+
+
 logging:
   level:
     org.springframework.security: DEBUG
@@ -37,3 +51,5 @@ app:
   webhook:
     base-url: "https://scored-overall-humanity-oem.trycloudflare.com"  # update when tunnel changes
     path: /api/payment/payos/webhook
+  mail:
+    fromName: Park Management

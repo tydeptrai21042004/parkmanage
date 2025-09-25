@@ -53,7 +53,7 @@ public class SecurityConfig {
           "/v3/api-docs.yaml"
         ).permitAll()
 
-        // Public endpoints
+        // Public endpoints (login/register + payment callbacks)
         .requestMatchers(
           "/public/**",
           "/api/users/login",
@@ -63,28 +63,59 @@ public class SecurityConfig {
           "/api/payment/payos/webhook/dev-complete/**"
         ).permitAll()
 
+        // *** Public catalog & guest checkout ***
+        .requestMatchers(HttpMethod.GET,  "/api/ticket-types/**").permitAll()
+        .requestMatchers(HttpMethod.GET,  "/api/events/**").permitAll()
+        .requestMatchers(HttpMethod.POST, "/api/orders").permitAll()
+
+        // TEMP (until /api/orders is implemented): allow guest on legacy ticket creation
+        .requestMatchers(HttpMethod.POST, "/api/tickets").permitAll()
+
+        // Ticket types admin
+        .requestMatchers(HttpMethod.POST,   "/api/ticket-types/**").hasAnyRole("MANAGER","ADMIN")
+        .requestMatchers(HttpMethod.PUT,    "/api/ticket-types/**").hasAnyRole("MANAGER","ADMIN")
+        .requestMatchers(HttpMethod.DELETE, "/api/ticket-types/**").hasAnyRole("MANAGER","ADMIN")
+
+        // Events admin
+        .requestMatchers(HttpMethod.POST,   "/api/events/**").hasAnyRole("MANAGER","ADMIN")
+        .requestMatchers(HttpMethod.PUT,    "/api/events/**").hasAnyRole("MANAGER","ADMIN")
+        .requestMatchers(HttpMethod.DELETE, "/api/events/**").hasAnyRole("MANAGER","ADMIN")
+
+        // Orders (other ops require auth)
+        .requestMatchers(HttpMethod.GET,    "/api/orders/**").authenticated()
+        .requestMatchers(HttpMethod.PUT,    "/api/orders/**").authenticated()
+        .requestMatchers(HttpMethod.DELETE, "/api/orders/**").authenticated()
+
         // Ticket pass endpoints
-        .requestMatchers(HttpMethod.GET, "/api/passes/*").permitAll()                 // public QR check
+        .requestMatchers(HttpMethod.GET,  "/api/passes/*").permitAll()        // public QR check
         .requestMatchers(HttpMethod.POST, "/api/passes/*/redeem").hasAuthority("TICKET_VALIDATE")
 
-        // Manager scope prefix
+        // Manager scope
         .requestMatchers("/api/manager/**").hasRole("MANAGER")
 
-        // Games & game reviews (new)
-        .requestMatchers(HttpMethod.GET, "/api/games/**").authenticated()
-        .requestMatchers(HttpMethod.POST, "/api/games/**").hasAnyRole("MANAGER","ADMIN")
-        .requestMatchers(HttpMethod.PUT, "/api/games/**").hasAnyRole("MANAGER","ADMIN")
+        // Games & game reviews
+        .requestMatchers(HttpMethod.GET,    "/api/games/**").authenticated()
+        .requestMatchers(HttpMethod.POST,   "/api/games/**").hasAnyRole("MANAGER","ADMIN")
+        .requestMatchers(HttpMethod.PUT,    "/api/games/**").hasAnyRole("MANAGER","ADMIN")
         .requestMatchers(HttpMethod.DELETE, "/api/games/**").hasAnyRole("MANAGER","ADMIN")
 
         .requestMatchers(HttpMethod.POST, "/api/game-reviews").authenticated()
-        .requestMatchers(HttpMethod.GET, "/api/game-reviews/**").authenticated()
+        .requestMatchers(HttpMethod.GET,  "/api/game-reviews/**").authenticated()
 
         // Notification admin
         .requestMatchers(HttpMethod.POST,   "/api/notifications/**", "/api/notification/**").hasRole("ADMIN")
         .requestMatchers(HttpMethod.PUT,    "/api/notifications/**", "/api/notification/**").hasRole("ADMIN")
         .requestMatchers(HttpMethod.DELETE, "/api/notifications/**", "/api/notification/**").hasRole("ADMIN")
-
-        // View notifications: authenticated
+        .requestMatchers(org.springframework.http.HttpMethod.GET,  "/api/ticket-types/**").permitAll()
+        .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/ticket-types/**").hasAnyRole("MANAGER","ADMIN")
+        .requestMatchers(org.springframework.http.HttpMethod.PUT,  "/api/ticket-types/**").hasAnyRole("MANAGER","ADMIN")
+        .requestMatchers(org.springframework.http.HttpMethod.DELETE,"/api/ticket-types/**").hasAnyRole("MANAGER","ADMIN")
+        .requestMatchers(HttpMethod.GET, "/api/events/**").permitAll()
+        .requestMatchers(HttpMethod.POST, "/api/orders").permitAll()
+        .requestMatchers("/api/orders/**").authenticated()
+        .requestMatchers(HttpMethod.POST, "/api/orders/*/refund").authenticated()
+        .requestMatchers(HttpMethod.GET , "/api/orders/*/refund").authenticated()
+        // View notifications
         .requestMatchers(HttpMethod.GET, "/api/notifications/**", "/api/notification/**").authenticated()
 
         // Everything else requires JWT
@@ -109,7 +140,8 @@ public class SecurityConfig {
       "http://localhost:5173",
       "http://127.0.0.1:5173"
     ));
-    cfg.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+    // FIX: removed stray comma after POST
+    cfg.setAllowedMethods(List.of("GET","POST","PUT","PATCH","DELETE","OPTIONS","HEAD"));
     cfg.setAllowedHeaders(List.of("*"));
     cfg.setExposedHeaders(List.of("Authorization", "Location"));
     cfg.setAllowCredentials(true);

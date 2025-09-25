@@ -1,32 +1,34 @@
 package park.management.com.vn.entity;
 
 import jakarta.persistence.*;
-
-import java.time.LocalDateTime;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import park.management.com.vn.entity.base.BaseEntity;
 import lombok.*;
-import jakarta.persistence.*;
+import park.management.com.vn.entity.base.BaseEntity;
 
+import java.time.LocalTime;
 
 @Entity
 @Table(name = "park_branch")
-@Setter
-@Getter
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class ParkBranch extends BaseEntity {
 
   @Column(nullable = false, unique = true)
   private String name;
+
   @Column(name = "address")
   private String address;
+
   @Column(name = "location")
   private String location;
 
-  private LocalDateTime open;
-  private LocalDateTime close;
+  @Column(name = "open_time", nullable = false)
+  private LocalTime openTime;
+
+  @Column(name = "close_time", nullable = false)
+  private LocalTime closeTime;
+
+  @Column(name = "image_url")
+  private String imageUrl;
+
+  @Column(nullable = false)
+  private Boolean status = true;
 }

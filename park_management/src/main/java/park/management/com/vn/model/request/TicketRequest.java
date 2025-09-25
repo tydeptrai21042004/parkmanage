@@ -25,6 +25,15 @@ public class TicketRequest {
     @FutureOrPresent
     private LocalDate ticketDate;
 
+    // ===== NEW: guest checkout fields (optional to not break logged-in flow) =====
+    private String customerName;
+    private Integer customerAge;
+    private String customerEmail;
+    private String customerPhone;
+
+    // Optional: wire vouchers later (§7)
+    private String voucherCode;
+
     // inner static class
     @Data
     public static class TicketDetailRequest {
@@ -34,8 +43,6 @@ public class TicketRequest {
         @NotNull
         @Min(1)
         private Integer quantity;
-
-
 
         private Long promotionId; // optional
     }

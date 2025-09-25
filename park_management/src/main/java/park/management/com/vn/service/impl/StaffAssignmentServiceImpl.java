@@ -12,9 +12,10 @@ import park.management.com.vn.model.response.StaffAssignmentResponse;
 import park.management.com.vn.repository.BranchStaffRepository;
 import park.management.com.vn.repository.ShiftRepository;
 import park.management.com.vn.repository.StaffAssignmentRepository;
-
-import java.util.List;
 import park.management.com.vn.service.StaffAssignmentService;
+
+import java.time.LocalDate;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -80,5 +81,21 @@ public class StaffAssignmentServiceImpl implements StaffAssignmentService {
             throw new EntityNotFoundException("StaffAssignment with ID not found: " + id);
         }
         staffAssignmentRepository.deleteById(id);
+    }
+
+    @Override
+    public List<StaffAssignmentResponse> getAllOfUserInMonth(Long userId, int month, int year) {
+        LocalDate start = LocalDate.of(year, month, 1);
+        LocalDate end = start.withDayOfMonth(start.lengthOfMonth());
+        var list = staffAssignmentRepository.findAllOfUserInRange(userId, start, end);
+        return list.stream().map(mapper::toResponse).toList();
+    }
+
+    @Override
+    public List<StaffAssignmentResponse> getAllOfBranchInMonth(Long branchId, int month, int year) {
+        LocalDate start = LocalDate.of(year, month, 1);
+        LocalDate end = start.withDayOfMonth(start.lengthOfMonth());
+        var list = staffAssignmentRepository.findAllOfBranchInRange(branchId, start, end);
+        return list.stream().map(mapper::toResponse).toList();
     }
 }

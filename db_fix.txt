@@ -1,0 +1,21 @@
+- bỏ "game_review"
+bảng "game" không cần field "location"
+bảng "game" bây giờ sẽ thay thế chỗ của bảng "product" hiện tại đang quan hệ với "branch_amenity"
+- bỏ "bulk-pricing-rule" với "daily-ticket-inventory" ko làm kịp 
+- "ticket-type" cho nó quan hệ với park-branch không quan hệ "game"
+field "start-time" với "end-time" không cần
+- "park-branch" đổi field open với close sang kiểu localtime đừng dùng datetime nó thừa
+- thêm bảng "branch-event" có ảnh, tiêu đề, nội dung, thời gian bắt đầu, kết thúc, khóa ngoại với "park-branch"
+- bảng "branch-promotion" đổi tên thành "branch-voucher" cho đúng.
+- có 3 bảng cần field ảnh hoặc bảng(image_url): park-branch, branch-amenity, game
+- hầu hết bảng cần có status (boolean) không có xóa trong hệ thống chỉ có disable
+ví dụ: park-branch, branch-amenity, game, branch-staff, user-entity, branch-voucher, staff-assignment ...
+- "staff-assignment" cần 1 field cho quét qr vào ca làm lúc nào với tan ca lúc nào
+(lưu lại thời gian quét qr)
+- "shift" business rule muốn là làm mặc định từ (10h-22h) cần 1 field cho thứ làm (t2, t3...)
+
+///////////////////////////////
+
+- branch-amenity, branch-voucher, branch-staff, branch-review cần getall...ofBranch(branchId) nói chung là những gì có khóa ngoại với branch
+
+- "staff-assignment" getAll(userId)

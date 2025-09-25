@@ -10,6 +10,7 @@ import park.management.com.vn.entity.Wallet;
 import park.management.com.vn.entity.WalletTopup;
 import park.management.com.vn.repository.WalletRepository;
 import park.management.com.vn.repository.WalletTopupRepository;
+import park.management.com.vn.service.EmailService;
 import park.management.com.vn.service.WalletTopupService;
 import park.management.com.vn.service.dto.StartTopupResult;
 import vn.payos.PayOS;
@@ -29,6 +30,7 @@ public class WalletTopupServiceImpl implements WalletTopupService {
   private final PayOS payOS;
   private final WalletRepository walletRepo;
   private final WalletTopupRepository topupRepo;
+  private final EmailService emailService;
 
   /** Optional S2S confirm endpoint (keep if you still use it elsewhere) */
   @Value("${app.internal-topup-confirm-url:}")
@@ -148,6 +150,25 @@ public class WalletTopupServiceImpl implements WalletTopupService {
 
     log.info("[SETTLE] SUCCESS walletId={} +{} newBalance={} orderCode={}",
         wallet.getId(), paid, wallet.getBalance(), d.getOrderCode());
+
+    // ---- EMAIL after successful top-up (webhook path) ----
+    if (wallet.getUserEntity() != null && wallet.getUserEntity().getEmail() != null) {
+      String to = wallet.getUserEntity().getEmail();
+      String subject = "[Park] Nạp ví thành công";
+      String html = """
+          <p>Xin chào %s,</p>
+          <p>Bạn vừa nạp <b>%s VND</b> vào ví thành công.</p>
+          <p>Số dư hiện tại: <b>%s VND</b></p>
+          <p>Cảm ơn bạn!</p>
+          """.formatted(
+              "User #" + (wallet.getUserEntity() != null ? wallet.getUserEntity().getId() : ""),
+
+              safe(paid),
+              safe(wallet.getBalance())
+          );
+      emailService.sendHtml(to, subject, html);
+    }
+
     return true;
   }
 
@@ -187,6 +208,24 @@ public class WalletTopupServiceImpl implements WalletTopupService {
 
     log.info("[CONFIRM] SUCCESS walletId={} +{} newBalance={} orderCode={}",
         wallet.getId(), paidAmount, wallet.getBalance(), orderCode);
+
+    // ---- EMAIL after successful top-up (confirm path) ----
+    if (wallet.getUserEntity() != null && wallet.getUserEntity().getEmail() != null) {
+      String to = wallet.getUserEntity().getEmail();
+      String subject = "[Park] Nạp ví thành công";
+      String html = """
+          <p>Xin chào %s,</p>
+          <p>Bạn vừa nạp <b>%s VND</b> vào ví thành công.</p>
+          <p>Số dư hiện tại: <b>%s VND</b></p>
+          <p>Cảm ơn bạn!</p>
+          """.formatted(
+              "User #" + (wallet.getUserEntity() != null ? wallet.getUserEntity().getId() : ""),
+
+              safe(paidAmount),
+              safe(wallet.getBalance())
+          );
+      emailService.sendHtml(to, subject, html);
+    }
   }
 
   /** (Optional) S2S polling fallback — do NOT construct WebhookData manually */
@@ -220,5 +259,9 @@ public class WalletTopupServiceImpl implements WalletTopupService {
       log.error("[S2S] Unable to read PaymentLinkData; adjust getters/type for your SDK.", e);
       throw new IllegalStateException("Adjust getters for PayOS link info type", e);
     }
+  }
+
+  private static String safe(Object o) {
+    return o == null ? "" : o.toString();
   }
 }

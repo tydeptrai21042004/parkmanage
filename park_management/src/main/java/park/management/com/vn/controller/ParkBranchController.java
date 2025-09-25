@@ -3,17 +3,12 @@ package park.management.com.vn.controller;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import park.management.com.vn.entity.ParkBranch;
+import org.springframework.web.bind.annotation.*;
 import park.management.com.vn.model.request.ParkBranchRequest;
+import park.management.com.vn.model.request.UpdateImageRequest;
 import park.management.com.vn.model.response.ParkBranchResponse;
+import park.management.com.vn.repository.ParkBranchRepository;
+import park.management.com.vn.entity.ParkBranch;
 import park.management.com.vn.service.ParkBranchService;
 
 @RestController
@@ -22,6 +17,7 @@ import park.management.com.vn.service.ParkBranchService;
 public class ParkBranchController {
 
     private final ParkBranchService parkBranchService;
+    private final ParkBranchRepository parkBranchRepository; // thêm để update ảnh nhanh
 
     @GetMapping
     public ResponseEntity<List<ParkBranchResponse>> getAllBranchPark() {
@@ -43,6 +39,17 @@ public class ParkBranchController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBranchPark(@PathVariable Long id) {
         parkBranchService.deleteBranchPark(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    // NEW: update ảnh riêng
+    @PutMapping("/{id}/image")
+    public ResponseEntity<Void> updateImage(@PathVariable Long id,
+                                            @RequestBody UpdateImageRequest req) {
+        ParkBranch b = parkBranchRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("BRANCH_NOT_FOUND"));
+        b.setImageUrl(req.getImageUrl());
+        parkBranchRepository.save(b);
         return ResponseEntity.noContent().build();
     }
 }

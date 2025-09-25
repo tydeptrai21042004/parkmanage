@@ -7,5 +7,7 @@ public record GameRequest(
     @NotNull Long branchId,
     @NotBlank String name,
     String description,
-    String location
+    // mới theo spec có ảnh + status
+    String imageUrl,
+    Boolean status
 ) {}

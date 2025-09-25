@@ -1,0 +1,61 @@
+ko cần đăng nhập đến khi mua vé mới cần
+Cần thêm thông tin khách hàng, tên, tuổi, email, sdt.
+
+chưa có event get và post (tên, mô tả, thời gian, chi nhánh)
+Luồng mua vé chưa có get loại vé cần get post tiket-type, 
+1️⃣ Vé (Ticket Type)
+
+Mục đích: quản lý các loại vé mà khách có thể mua.
+
+API:
+Method	Endpoint	Chức năng
+GET	/api/ticket-types	Lấy danh sách loại vé
+GET	/api/ticket-types/{id}	Lấy chi tiết 1 loại vé
+POST	/api/ticket-types	Tạo loại vé mới
+PUT	/api/ticket-types/{id}	Cập nhật thông tin loại vé
+DELETE	/api/ticket-types/{id}	Xóa loại vé
+2️⃣ Đơn hàng (Order / Ticket Order)
+
+Mục đích: khách chọn loại vé + số lượng → tạo order → thanh toán.
+
+API:
+
+Method	Endpoint	Chức năng
+POST	/api/orders	Tạo đơn hàng mới (chứa danh sách vé + số lượng)
+GET	/api/orders/{id}	Lấy chi tiết đơn hàng
+GET	/api/orders?userId=...	Lấy danh sách đơn hàng của user
+PUT	/api/orders/{id}	Cập nhật trạng thái đơn hàng (paid, canceled, refunded)
+DELETE	/api/orders/{id}	Hủy đơn hàng (nếu chưa thanh toán / theo policy)
+
+4️⃣ Hoàn tiền / Refund
+
+Mục đích: hủy đơn hàng / hoàn tiền theo policy.
+
+API:
+
+Method	Endpoint	Chức năng
+POST	/api/orders/{orderId}/refund	Yêu cầu hoàn tiền cho đơn hàng
+GET	/api/orders/{orderId}/refund	Xem trạng thái hoàn tiền
+
+Luồng voucher chưa có add vào order
+Notifi cho phép app khách post, khi mua vé nạp tiền và gửi đến mail
+
+business rule cho ticket và voucher
+Mua vé
+Một khách có thể mua tối đa 10 vé trong một lần giao dịch.
+Vé có thời hạn sử dụng theo ngày/khung giờ quy định.( trong ngày trước 3h chiều)
+
+Voucher
+Voucher áp dụng trên tổng giao dịch, không áp dụng riêng từng vé.
+Mỗi khách không được dùng tối đa 3 voucher cùng id
+Mỗi giao dịch chỉ được áp dụng tối đa 1 voucher.
+Voucher phải còn hạn, thỏa điều kiện mới được áp dụng.
+Voucher đã dùng thành công sẽ không thể hoàn lại.
+Voucher được giảm tối đa 50%, không quá 500k trên 1 giao dịch.
+
+Hoàn tiền & Hủy vé
+Khách được yêu cầu hoàn tiền/hủy vé nếu gửi yêu cầu ít nhất 24h (1 ngày) trước giờ sử dụng vé.
+Sau thời hạn trên, vé được xem là không hoàn/hủy.
+Số tiền hoàn lại = giá vé sau giảm (đã áp dụng voucher).
+Vé chưa quét check-in mới có thể hoàn/hủy.
+Không cho hoàn nhiều lần cùng 1 vé.

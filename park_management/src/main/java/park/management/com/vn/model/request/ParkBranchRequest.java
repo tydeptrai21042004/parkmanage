@@ -3,16 +3,12 @@ package park.management.com.vn.model.request;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.time.LocalDateTime;
 import lombok.Data;
 
+import java.time.LocalTime;
+
 @Builder
-@Setter
-@Getter
-@lombok.Data
+@Data
 public class ParkBranchRequest {
 
     @NotBlank
@@ -25,9 +21,8 @@ public class ParkBranchRequest {
     private String location;
 
     @NotNull
-    private LocalDateTime open;
+    private LocalTime openTime;
 
     @NotNull
-    private LocalDateTime close;
-
+    private LocalTime closeTime;
 }

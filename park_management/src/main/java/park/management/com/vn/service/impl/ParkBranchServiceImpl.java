@@ -23,7 +23,6 @@ public class ParkBranchServiceImpl implements ParkBranchService {
     private final ParkBranchRepository parkBranchRepository;
     private final ParkBranchMapper mapper;
 
-
     @Override
     public Optional<ParkBranch> findById(Long id) {
         return parkBranchRepository.findById(id);
@@ -57,8 +56,9 @@ public class ParkBranchServiceImpl implements ParkBranchService {
                     branch.setName(request.getName());
                     branch.setAddress(request.getAddress());
                     branch.setLocation(request.getLocation());
-                    branch.setOpen(request.getOpen());
-                    branch.setClose(request.getClose());
+                    // switched to LocalTime fields
+                    branch.setOpenTime(request.getOpenTime());
+                    branch.setCloseTime(request.getCloseTime());
                     return parkBranchRepository.save(branch);
                 })
                 .orElseThrow(() -> new RuntimeException("Branch not found with id: " + id));
@@ -69,7 +69,4 @@ public class ParkBranchServiceImpl implements ParkBranchService {
     public void deleteBranchPark(Long id) {
         parkBranchRepository.deleteById(id);
     }
-
-
-
 }
