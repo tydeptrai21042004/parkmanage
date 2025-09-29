@@ -49,7 +49,8 @@ gemini:
 app:
   internal-topup-confirm-url: http://localhost:8080/api/local/topups/confirm
   webhook:
-    base-url: "https://scored-overall-humanity-oem.trycloudflare.com"  # update when tunnel changes
+    base-url: "https://parkmanage.onrender.com"  # update when tunnel changes
     path: /api/payment/payos/webhook
   mail:
+
     fromName: Park Management
