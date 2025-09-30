@@ -33,9 +33,9 @@ logging:
   level:
     org.springframework.security: DEBUG
 # Prefer ENV VARS for secrets in real environments, but this works for local dev
-PAYOS_CLIENT_ID: 97300895-75a4-49fc-bb45-9d37291bdf96
-PAYOS_API_KEY: aa2e5a31-c125-4f69-b86f-483f23223d62
-PAYOS_CHECKSUM_KEY: 8012fa93a8d3681148c224c36ec91a8d39f2b9c90f3ef3cb5c95259b6ae447da
+PAYOS_CLIENT_ID: c2fbf473-2403-4441-9b9a-aec78cf39a82
+PAYOS_API_KEY: 76675f43-a3cf-4311-a7f0-8316fd8ea3a9
+PAYOS_CHECKSUM_KEY: e1b57c7e9f9aa99aca0322c01a8e42cc2aa8278cd0400bab13036c6c2d92fd6b
 
 jwt:
   secret: change-me-very-long-random-string-at-least-32-bytes-11111111111111111111111
@@ -54,3 +54,4 @@ app:
   mail:
 
     fromName: Park Management
+
