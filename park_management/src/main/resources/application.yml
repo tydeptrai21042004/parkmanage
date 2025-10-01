@@ -1,3 +1,4 @@
+# application.yml (dev stays exactly as you have it)
 server:
   port: 8080
 
@@ -27,12 +28,11 @@ spring:
           starttls:
             enable: true
 
-
-
 logging:
   level:
     org.springframework.security: DEBUG
-# Prefer ENV VARS for secrets in real environments, but this works for local dev
+
+# Prefer ENV VARS for secrets in real environments, but kept as-is per your request
 PAYOS_CLIENT_ID: c2fbf473-2403-4441-9b9a-aec78cf39a82
 PAYOS_API_KEY: 76675f43-a3cf-4311-a7f0-8316fd8ea3a9
 PAYOS_CHECKSUM_KEY: e1b57c7e9f9aa99aca0322c01a8e42cc2aa8278cd0400bab13036c6c2d92fd6b
@@ -43,15 +43,38 @@ jwt:
   issuer: change-me-issuer
 
 gemini:
-  api-key: AIzaSyDL4bvKRy3qkJz0HjihQg3PckjbU-3pb5U    # prefer env var in real use
+  api-key: AIzaSyDL4bvKRy3qkJz0HjihQg3PckjbU-3pb5U    # kept as-is
   model: gemini-2.0-flash
 
 app:
   internal-topup-confirm-url: http://localhost:8080/api/local/topups/confirm
   webhook:
-    base-url: "https://parkmanage.onrender.com"  # update when tunnel changes
+    base-url: "https://parkmanage.onrender.com"  # kept as-is
     path: /api/payment/payos/webhook
   mail:
-
     fromName: Park Management
 
+---
+# test profile (added) — uses in-memory H2 and quieter logging
+spring:
+  config:
+    activate:
+      on-profile: test
+  datasource:
+    url: jdbc:h2:mem:parkdb;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+  h2:
+    console:
+      enabled: false
+
+logging:
+  level:
+    root: WARN
+    org.springframework: WARN
+    org.hibernate.SQL: WARN
