@@ -22,3 +22,4 @@ curl -I http://localhost:8080/swagger-ui.html
 
 git remote add origin https://github.com/tydeptrai21042004/parkmanage
 
+run the test :mvn -f park_management/pom.xml -DskipTests=false test
